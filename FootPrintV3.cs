@@ -1653,7 +1653,7 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 		///
 		public override string DisplayName
 		{
-		    get { return "FootPrint V2 (" + custProfilePctValue + " / " + custProfileBarValue + " / " + custProfileVolValue + " / " + custProfileRngValue + ")"; }
+		    get { return "FootPrint V3 (" + custProfilePctValue + " / " + custProfileBarValue + " / " + custProfileVolValue + " / " + custProfileRngValue + ")"; }
 		}
 		
 		#endregion
