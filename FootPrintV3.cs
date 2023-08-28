@@ -594,7 +594,7 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 		
 		#region Variables
 		
-		private bool log = true;
+		private bool log = false;
 		private bool bor = false;
 		
 		private double _vol,_ask,_bid,_cls;
@@ -825,11 +825,6 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 			else if(State == State.Configure)
 			{
 				AddDataSeries(Data.BarsPeriodType.Tick, 1);
-				
-				if(ChartBars != null)
-				{
-					SetZOrder(ChartBars.ZOrder - 1);
-				}
 			}
 			else if(State == State.DataLoaded)
 			{
@@ -876,6 +871,10 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 				{
 					ClearOutputWindow();
 				}
+			}
+			else if(State == State.Historical)
+			{
+				SetZOrder(-1);
 			}
 			else if(State == State.Terminated)
 			{
@@ -4612,7 +4611,7 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 			
 			/// ---
 			
-			if(dTextSize > 0)
+			if(tfDynNorm != null && tfDynBold != null)
 			{
 				sfDynNorm = null;
 				sfDynBold = null;
