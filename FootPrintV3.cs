@@ -714,8 +714,8 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 				prevProfileGradient  = true;
 				prevProfileBar		 = true;
 				prevProfileValueArea = true;
-				prevProfileExtendVa  = false;
-				prevProfileShowDelta = false;
+				prevProfileExtendVa  = true;
+				prevProfileShowDelta = true;
 				
 				/// ---
 				
@@ -725,7 +725,7 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 				currProfileBar		 = true;
 				currProfileValueArea = true;
 				currProfileExtendVa  = false;
-				currProfileShowDelta = false;
+				currProfileShowDelta = true;
 				
 				/// ---
 				
@@ -734,7 +734,7 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 				custProfileGradient  = true;
 				custProfileValueArea = false;
 				custProfileExtendVa  = false;
-				custProfileShowDelta = false;
+				custProfileShowDelta = true;
 				custProfilePctValue	 = 1;
 				custProfileBarValue	 = 12;
 				custProfileVolValue	 = 1;
@@ -748,18 +748,18 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 				footprintDisplayType    = FPV3FootprintDisplayType.Profile;
 				footprintDeltaOutline   = true;
 				footprintDeltaProfile   = true;
-				footprintDeltaGradient	= true;
-				footprintImbalances	    = true;
+				footprintDeltaGradient	= false;
+				footprintImbalances	    = false;
 				minImbalanceRatio 	    = 0.4;
 				footprintGradient	    = false;
 				footprintRelativeVolume = false;
-				footprintBarVolume		= true;
-				footprintBarDelta		= true;
-				footprintBarDeltaSwing	= true;
+				footprintBarVolume		= false;
+				footprintBarDelta		= false;
+				footprintBarDeltaSwing	= false;
 				
 				/// ---
 				
-				showBottomArea		= true;
+				showBottomArea		= false;
 				bottomAreaType		= FPV3BottomAreaType.Delta;
 				bottomAreaGradient	= false;
 				bottomAreaLabel     = true;
@@ -2408,6 +2408,11 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 				return ChartControl.Properties.LabelFont.Size;
 			}
 			
+			if(cellWidth < 14)
+			{
+				return 0;
+			}
+			
 			// check height
 			
 			float  y1 = 0f;
@@ -2469,12 +2474,12 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 					tf.Dispose();
 					tl.Dispose();
 					
-					fontSize = fontSize -1;
+					fontSize = fontSize - 1;
 				}
 				
 			}
 			
-			return fontSize;
+			return Math.Max(fontSize, 1);
 		}
 		
 		/// getCellWidth
@@ -3956,11 +3961,20 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 			SharpDX.Direct2D1.AntialiasMode oldAntialiasMode = RenderTarget.AntialiasMode;
 			RenderTarget.AntialiasMode = SharpDX.Direct2D1.AntialiasMode.Aliased;
 			
-			SimpleFont sfDynNorm = new SimpleFont("Consolas", dTextSize);
-			SimpleFont sfDynBold = new SimpleFont("Consolas", dTextSize){ Bold = true };
+			SimpleFont sfDynNorm = null;
+			SimpleFont sfDynBold = null;
 			
-			TextFormat tfDynNorm = sfDynNorm.ToDirectWriteTextFormat();
-			TextFormat tfDynBold = sfDynBold.ToDirectWriteTextFormat();
+			TextFormat tfDynNorm = null;
+			TextFormat tfDynBold = null;
+			
+			if(dTextSize > 0)
+			{
+				sfDynNorm = new SimpleFont("Consolas", dTextSize);
+				sfDynBold = new SimpleFont("Consolas", dTextSize){ Bold = true };
+			
+				tfDynNorm = sfDynNorm.ToDirectWriteTextFormat();
+				tfDynBold = sfDynBold.ToDirectWriteTextFormat();
+			}
 			
 			int   x1 = 0;
 			int   x2 = 0;
@@ -4297,7 +4311,7 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 					
 					/// ask - text
 					
-					if(footprintDisplayType == FPV3FootprintDisplayType.Numbers)
+					if(footprintDisplayType == FPV3FootprintDisplayType.Numbers && tfDynNorm != null && tfDynBold != null)
 					{
 						tfDynNorm.TextAlignment = SharpDX.DirectWrite.TextAlignment.Leading;
 						tfDynBold.TextAlignment = SharpDX.DirectWrite.TextAlignment.Leading;
@@ -4540,7 +4554,7 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 					
 					/// bid - text
 					
-					if(footprintDisplayType == FPV3FootprintDisplayType.Numbers)
+					if(footprintDisplayType == FPV3FootprintDisplayType.Numbers && tfDynNorm != null && tfDynBold != null)
 					{
 						tfDynNorm.TextAlignment = SharpDX.DirectWrite.TextAlignment.Trailing;
 						tfDynBold.TextAlignment = SharpDX.DirectWrite.TextAlignment.Trailing;
@@ -4598,10 +4612,13 @@ namespace NinjaTrader.NinjaScript.Indicators.Infinity
 			
 			/// ---
 			
-			sfDynNorm = null;
-			sfDynBold = null;
-			tfDynNorm.Dispose();
-			tfDynBold.Dispose();
+			if(dTextSize > 0)
+			{
+				sfDynNorm = null;
+				sfDynBold = null;
+				tfDynNorm.Dispose();
+				tfDynBold.Dispose();
+			}
 			
 			/// ---
 			
